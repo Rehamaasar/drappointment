@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import Services from "./pages/Services";
@@ -28,3 +29,5 @@ function App() {
 }
 
 export default App;
+=======
+>>>>>>> Stashed changes
