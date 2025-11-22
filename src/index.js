@@ -1,5 +1,3 @@
-// Assigned to Lama
-// src/main.jsx (or src/index.js depending on your setup)
 
 import React from "react";
 import ReactDOM from "react-dom/client";
