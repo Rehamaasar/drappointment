@@ -5,10 +5,9 @@ import Services from "./pages/Services";
 import Doctors from "./pages/Doctors";
 import Login from "./pages/Login";
 import Contact from "./pages/Contact";
-import NotFound from "./pages/NotFound";
-import Layout from "./Layout";
+import Layout from "./components/Layout";
 import About from "./pages/About";
-import DoctorDetail from "./pages/DoctorDetail";
+import DoctorDetail from "./pages/DoctorDetails";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 
@@ -25,7 +24,6 @@ function App() {
         <Route path="/doctors" element={<Doctors />} />
         <Route path="/login" element={<Login />} />
         <Route path="/contact" element={<Contact />} />
-        <Route path="*" element={<NotFound />} />
       </Routes>
       <Footer />
     </BrowserRouter>
