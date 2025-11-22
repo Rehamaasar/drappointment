@@ -1,3 +1,6 @@
+// Assigned to Lama
+// src/pages/Home.jsx
+
 import { useNavigate } from "react-router-dom";
 import { stats, testimonials } from "../data";
 import SectionHeader from "../components/SectionHeader";
