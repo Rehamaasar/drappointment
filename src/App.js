@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import React from "react";
@@ -34,3 +35,5 @@ function App() {
 
 export default App;
 
+=======
+>>>>>>> d9bf9c478d66a27ab8f11d6e86a9d6957ffeddea
