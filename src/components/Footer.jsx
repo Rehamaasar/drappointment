@@ -1,4 +1,4 @@
-// Assigned to Lama
+
 // src/components/Footer.jsx
 
 import { NavLink } from "react-router-dom";
