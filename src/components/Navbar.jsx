@@ -1,6 +1,5 @@
 
-<<<<<<< HEAD
-=======
+
 import { NavLink, useNavigate } from "react-router-dom";
 import { HeartPulse } from "lucide-react";
 
