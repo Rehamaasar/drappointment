@@ -1,6 +1,3 @@
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-// src/components/DoctorCard.jsx
 import { Star } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
@@ -50,23 +47,8 @@ function DoctorCard({ doctor }) {
           View Profile
         </button>
       </div>
-=======
-=======
->>>>>>> Stashed changes
-// REHAM
-
-function DoctorCard({ doctor }) {
-  return (
-    <div className="bg-white shadow rounded-lg p-4">
-      <img src={doctor.image} className="w-full rounded-lg mb-4" />
-      <h3 className="text-xl font-bold">{doctor.name}</h3>
-      <p className="text-gray-600">{doctor.specialty}</p>
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-    </div>
+      </div>
   );
 }
-
+  
 export default DoctorCard;
