@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-// REHAM
 
-=======
->>>>>>> 5406e0bb834f0bfc5c07bd7da41f12f5a7d5e74a
 function TestimonialCard({ testimonial }) {
   return (
     <div className="bg-white shadow rounded-lg p-4">
