@@ -1,4 +1,5 @@
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 // src/components/DoctorCard.jsx
 import { Star } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -50,6 +51,8 @@ function DoctorCard({ doctor }) {
         </button>
       </div>
 =======
+=======
+>>>>>>> Stashed changes
 // REHAM
 
 function DoctorCard({ doctor }) {
@@ -58,6 +61,9 @@ function DoctorCard({ doctor }) {
       <img src={doctor.image} className="w-full rounded-lg mb-4" />
       <h3 className="text-xl font-bold">{doctor.name}</h3>
       <p className="text-gray-600">{doctor.specialty}</p>
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
     </div>
   );
