@@ -1,7 +1,10 @@
+<<<<<<< HEAD
 // src/components/DoctorCard.jsx
 import { Star } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
+=======
+>>>>>>> e59b98879056c056840c5279b1da74ee44643565
 function DoctorCard({ doctor }) {
   const navigate = useNavigate();
 
