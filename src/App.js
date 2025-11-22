@@ -1,5 +1,4 @@
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
+
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import React from "react";
 import Home from "./pages/Home";
@@ -12,6 +11,7 @@ import About from "./pages/About";
 import DoctorDetail from "./pages/DoctorDetails";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+
 
 function App() {
   return (
@@ -34,7 +34,3 @@ function App() {
 
 export default App;
 
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
