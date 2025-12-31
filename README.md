@@ -121,4 +121,7 @@ Lama Harmouch  52330808
 Reham Aasar  52230205
 
 Instructor: Dr. Ahmad Trad
-Semester: Fall 2025–2026
+Semester: Fall 2025–2026  
+
+
+Final full project submission
