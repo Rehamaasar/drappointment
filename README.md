@@ -124,4 +124,9 @@ Instructor: Dr. Ahmad Trad
 Semester: Fall 2025–2026  
 
 
+<<<<<<< HEAD
 Final full project submission
+=======
+Final submission – fullstack project
+
+>>>>>>> c92553fa89cee50773600b5fdabaad6abcbed238
