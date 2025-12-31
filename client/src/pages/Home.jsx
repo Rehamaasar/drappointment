@@ -1,14 +1,50 @@
+// src/pages/Home.jsx
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { stats, testimonials } from "../data";
-import SectionHeader from "../components/SectionHeader";
-import DoctorCard from "../components/DoctorCard";
 import { Users, HeartPulse, ShieldCheck } from "lucide-react";
-import { doctors } from "../data/doctors";
+
+import api from "../api";
+import SectionHeader from "../components/SectionHeader.jsx";
+import DoctorCard from "../components/DoctorCard.jsx";
+
+// If you already have these in src/data.js
+import { stats, testimonials } from "../data.js";
+
+const BACKEND = "http://localhost:5000";
+
+function mapDoctor(d) {
+  return {
+    id: d.id,
+    name: d.full_name,
+    specialty: d.specialty,
+    rating: d.rating,
+    experience: `${d.years_experience} years experience`,
+    location: d.location,
+    about: d.bio,
+    image: d.image_path ? `${BACKEND}${d.image_path}` : "/images/doctors/dr-sarah-johnson.png",
+  };
+}
 
 function Home() {
   const navigate = useNavigate();
 
-  // only show first 3 doctors on the home page
+  const [doctors, setDoctors] = useState([]);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    api
+      .get("/doctors") // ✅ correct route
+      .then((rows) => {
+        const mapped = (rows || []).map(mapDoctor);
+        setDoctors(mapped);
+        setError("");
+      })
+      .catch((err) => {
+        console.log("HOME DOCTORS ERROR:", err);
+        setError(err?.message || "Failed to load doctors. Is backend running?");
+      });
+  }, []);
+
   const homeDoctors = doctors.slice(0, 3);
 
   return (
@@ -21,6 +57,7 @@ function Home() {
             <p className="text-sm font-semibold text-[#6366f1] mb-3">
               Expert Medical Care
             </p>
+
             <h1 className="text-4xl sm:text-5xl font-bold text-slate-900 leading-tight mb-4">
               Your wellness,
               <br />
@@ -28,9 +65,10 @@ function Home() {
                 our priority.
               </span>
             </h1>
+
             <p className="text-slate-600 max-w-xl mb-6">
-              Experience compassionate, expert medical care tailored to you and
-              your family. Your health journey begins with us.
+              Experience compassionate, expert medical care tailored to you and your family.
+              Your health journey begins with us.
             </p>
 
             <div className="flex flex-wrap gap-3 mb-6">
@@ -41,6 +79,7 @@ function Home() {
               >
                 Book Appointment
               </button>
+
               <button
                 onClick={() => navigate("/doctors")}
                 className="inline-flex items-center justify-center px-5 py-2.5 rounded-full border border-[#6366f1] text-[#6366f1] text-sm font-medium bg-white/80 hover:bg-[#eef2ff] transition active:scale-95"
@@ -57,6 +96,7 @@ function Home() {
                 </span>
                 <span>10K+ happy patients</span>
               </div>
+
               <div className="flex items-center gap-2">
                 <span className="h-8 w-8 rounded-full bg-[#fce7f3] flex items-center justify-center">
                   <HeartPulse className="h-4 w-4 text-[#ec4899]" />
@@ -73,8 +113,13 @@ function Home() {
                 src="/images/doctors/hero/hero-doctor-patient.png"
                 alt="Doctor with patient"
                 className="w-full h-[340px] object-cover"
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src = "/images/doctors/dr-sarah-johnson.png";
+                }}
               />
             </div>
+
             <div className="absolute -bottom-6 left-6 rounded-2xl bg-white/90 px-4 py-3 shadow-md flex items-center gap-3">
               <div className="h-9 w-9 rounded-xl bg-[#eef2ff] flex items-center justify-center">
                 <ShieldCheck className="h-5 w-5 text-[#6366f1]" />
@@ -96,12 +141,8 @@ function Home() {
           <div className="rounded-3xl bg-gradient-to-r from-[#6366f1] via-[#a855f7] to-[#ec4899] py-6 px-6 sm:px-10 text-white grid grid-cols-2 sm:grid-cols-4 gap-6">
             {stats.map((item) => (
               <div key={item.label} className="text-center sm:text-left">
-                <div className="text-xl sm:text-2xl font-bold">
-                  {item.value}
-                </div>
-                <div className="text-xs sm:text-sm opacity-90">
-                  {item.label}
-                </div>
+                <div className="text-xl sm:text-2xl font-bold">{item.value}</div>
+                <div className="text-xs sm:text-sm opacity-90">{item.label}</div>
               </div>
             ))}
           </div>
@@ -117,11 +158,19 @@ function Home() {
             subtitle="Get to know some of our board-certified specialists who are dedicated to your health and wellbeing."
             align="left"
           />
+
+          {error && (
+            <div className="mb-4 p-4 rounded-xl border border-red-200 bg-red-50 text-red-700 text-sm">
+              {error}
+            </div>
+          )}
+
           <div className="grid gap-6 md:grid-cols-3">
             {homeDoctors.map((doctor) => (
               <DoctorCard key={doctor.id} doctor={doctor} />
             ))}
           </div>
+
           <div className="mt-8 flex justify-center">
             <button
               onClick={() => navigate("/doctors")}
@@ -140,33 +189,36 @@ function Home() {
           <SectionHeader
             title="Patient"
             highlight="Reviews"
-            subtitle="Don't just take our word for it. Here's what our patients have to say about their experience with us."
+            subtitle="Don't just take our word for it. Here's what our patients have to say."
           />
+
           <div className="grid gap-6 md:grid-cols-3">
             {testimonials.map((review) => (
               <div
                 key={review.id}
                 className="bg-white rounded-3xl shadow-sm p-6 flex flex-col gap-4 hover:shadow-lg transition transform hover:-translate-y-1"
               >
-                <div className="flex gap-1 text-[#f97316] text-xs">
-                  {"★★★★★"}
-                </div>
+                <div className="flex gap-1 text-[#f97316] text-xs">{"★★★★★"}</div>
+
                 <p className="text-sm text-slate-700 leading-relaxed">
                   “{review.quote}”
                 </p>
+
                 <div className="flex items-center gap-3 mt-2">
                   <img
                     src={review.avatar}
                     alt={review.name}
                     className="h-10 w-10 rounded-full object-cover"
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = "/images/doctors/dr-sarah-johnson.png";
+                    }}
                   />
                   <div>
                     <div className="text-sm font-semibold text-slate-900">
                       {review.name}
                     </div>
-                    <div className="text-xs text-slate-500">
-                      {review.subtitle}
-                    </div>
+                    <div className="text-xs text-slate-500">{review.subtitle}</div>
                   </div>
                 </div>
               </div>

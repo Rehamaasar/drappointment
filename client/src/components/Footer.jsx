@@ -93,7 +93,7 @@ export default function Footer() {
         {/* Bottom line */}
         <div className="mt-10 pt-6 border-t border-slate-200 text-center">
           <p className="text-sm text-slate-500 text-center mt-6">
-            © {new Date().getFullYear()} HealthCare+. All rights reserved.
+            ©️ {new Date().getFullYear()} HealthCare+. All rights reserved.
           </p>
         </div>
       </div>

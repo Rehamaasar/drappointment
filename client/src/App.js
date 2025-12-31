@@ -9,6 +9,8 @@ import Doctors from "./pages/Doctors";
 import DoctorDetails from "./pages/DoctorDetails";
 import Contact from "./pages/Contact";
 import Login from "./pages/Login";
+import SignUp from "./pages/SignUp.jsx";
+
 
 function App() {
   return (
@@ -21,6 +23,7 @@ function App() {
         <Route path="/doctors/:id" element={<DoctorDetails />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<SignUp />} />
       </Routes>
     </Layout>
   );

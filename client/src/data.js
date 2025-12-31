@@ -1,4 +1,3 @@
-
 // src/data.js
 
 export const stats = [
@@ -50,45 +49,6 @@ export const services = [
     description:
       "Comprehensive laboratory services with quick results and detailed health analysis reports.",
     icon: "Beaker",
-  },
-];
-
-export const doctors = [
-  {
-    id: "1",
-    name: "Dr. Sarah Johnson",
-    specialty: "Cardiologist",
-    yearsExperience: 15,
-    rating: 4.9,
-    image: "/images/doctor-sarah.jpg",
-    location: "HealthCare+ Medical Center",
-    availability: ["Monday", "Wednesday", "Friday"],
-    about:
-      "Dr. Sarah Johnson is a board-certified cardiologist with over 15 years of experience in cardiovascular medicine. She specializes in preventive cardiology and heart disease management.",
-  },
-  {
-    id: "2",
-    name: "Dr. Michael Chen",
-    specialty: "Pediatrician",
-    yearsExperience: 12,
-    rating: 4.8,
-    image: "/images/doctor-michael.jpg",
-    location: "HealthCare+ Children’s Clinic",
-    availability: ["Tuesday", "Thursday"],
-    about:
-      "Dr. Michael Chen is a compassionate pediatrician focused on providing comprehensive care for infants, children, and adolescents.",
-  },
-  {
-    id: "3",
-    name: "Dr. Emily Rodriguez",
-    specialty: "Dermatologist",
-    yearsExperience: 10,
-    rating: 4.9,
-    image: "/images/doctor-emily.jpg",
-    location: "HealthCare+ Skin & Wellness Center",
-    availability: ["Monday", "Thursday"],
-    about:
-      "Dr. Emily Rodriguez is a dermatologist with expertise in both medical and cosmetic dermatology, helping patients feel confident in their skin.",
   },
 ];
 

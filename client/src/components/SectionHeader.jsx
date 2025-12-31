@@ -1,4 +1,3 @@
-
 function SectionHeader({ eyebrow, title, highlight, subtitle, align = "center" }) {
   const alignClass =
     align === "left" ? "items-start text-left" : "items-center text-center";

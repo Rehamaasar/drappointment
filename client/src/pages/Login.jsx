@@ -1,18 +1,62 @@
 import { useState } from "react";
 import { HeartPulse } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { apiRequest } from "../api";
 
 function Login() {
-  const [showSuccess, setShowSuccess] = useState(false);
+  const navigate = useNavigate();
 
-  function handleSubmit(e) {
-    // If the email is invalid, the browser will block submit
-    // and this function will NOT run. So we only show success
-    // when the form is valid.
+  const [form, setForm] = useState({
+    email: "",
+    password: "",
+  });
+
+  const [toast, setToast] = useState("");
+  const [isError, setIsError] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  function showToast(message, error = false) {
+    setToast(message);
+    setIsError(error);
+    setTimeout(() => setToast(""), 3000);
+  }
+
+  function handleChange(e) {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  }
+
+  async function handleSubmit(e) {
     e.preventDefault();
-    setShowSuccess(true);
 
-    // hide toast after 3 seconds
-    setTimeout(() => setShowSuccess(false), 3000);
+    if (!form.email.trim() || !form.password.trim()) {
+      return showToast("Please enter email and password.", true);
+    }
+
+    setLoading(true);
+
+    try {
+      // ✅ CORRECT backend route
+      const data = await apiRequest("/auth/login", {
+        method: "POST",
+        body: JSON.stringify({
+          email: form.email,
+          password: form.password,
+        }),
+      });
+
+      // ✅ SAVE TOKEN + USER
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user));
+
+      showToast(data.message || "Login successful! Welcome back 👋", false);
+
+      setTimeout(() => navigate("/"), 800);
+    } catch (err) {
+      console.log("LOGIN ERROR:", err);
+      showToast(err?.message || "Invalid email or password.", true);
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -42,6 +86,9 @@ function Login() {
               </label>
               <input
                 type="email"
+                name="email"
+                value={form.email}
+                onChange={handleChange}
                 required
                 className="mt-1 w-full rounded-xl border border-slate-200 bg-[#f3f4ff]/60 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[#6366f1]"
                 placeholder="john@example.com"
@@ -55,30 +102,22 @@ function Login() {
               </label>
               <input
                 type="password"
+                name="password"
+                value={form.password}
+                onChange={handleChange}
                 required
                 className="mt-1 w-full rounded-xl border border-slate-200 bg-[#f3f4ff]/60 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[#6366f1]"
                 placeholder="••••••••"
               />
             </div>
 
-            {/* REMEMBER + FORGOT */}
-            <div className="flex items-center justify-between text-xs text-slate-600">
-              <label className="flex items-center gap-2">
-                <input type="checkbox" className="rounded border-slate-300" />
-                <span>Remember me</span>
-              </label>
-
-              <button type="button" className="text-[#6366f1] hover:underline">
-                Forgot password?
-              </button>
-            </div>
-
             {/* SIGN IN BUTTON */}
             <button
               type="submit"
-              className="mt-2 inline-flex w-full items-center justify-center rounded-full bg-[#6366f1] text-white text-sm font-medium py-2.5 hover:bg-[#4f46e5] transition active:scale-95"
+              disabled={loading}
+              className="mt-2 inline-flex w-full items-center justify-center rounded-full bg-[#6366f1] text-white text-sm font-medium py-2.5 hover:bg-[#4f46e5] transition active:scale-95 disabled:opacity-60"
             >
-              Sign In
+              {loading ? "Signing in..." : "Sign In"}
             </button>
           </form>
 
@@ -87,6 +126,7 @@ function Login() {
             Don&apos;t have an account?{" "}
             <button
               type="button"
+              onClick={() => navigate("/signup")}
               className="text-[#6366f1] font-medium hover:underline"
             >
               Sign up
@@ -95,11 +135,21 @@ function Login() {
         </div>
       </div>
 
-      {/* SUCCESS TOAST */}
-      {showSuccess && (
-        <div className="fixed bottom-4 right-4 max-w-xs rounded-2xl bg-white shadow-lg border border-slate-100 px-4 py-3 text-sm">
-          <p className="font-semibold text-slate-900 mb-1">Login Successful!</p>
-          <p className="text-slate-600">Welcome back to HealthCare+</p>
+      {/* TOAST */}
+      {toast && (
+        <div
+          className={`fixed bottom-4 right-4 max-w-xs rounded-2xl bg-white shadow-lg border px-4 py-3 text-sm ${
+            isError ? "border-red-200" : "border-slate-100"
+          }`}
+        >
+          <p
+            className={`font-semibold mb-1 ${
+              isError ? "text-red-600" : "text-slate-900"
+            }`}
+          >
+            {isError ? "Login Failed" : "Login Successful!"}
+          </p>
+          <p className="text-slate-600">{toast}</p>
         </div>
       )}
     </div>
