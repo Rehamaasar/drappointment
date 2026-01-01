@@ -1,9 +1,7 @@
 import { useEffect, useState } from "react";
 import SectionHeader from "../components/SectionHeader";
 import DoctorCard from "../components/DoctorCard";
-import api from "../api";
-
-const BACKEND = "http://localhost:5000";
+import api, { buildImageUrl } from "../api";
 
 function mapDoctor(d) {
   return {
@@ -14,7 +12,11 @@ function mapDoctor(d) {
     experience: `${d.years_experience} years experience`,
     location: d.location,
     about: d.bio,
-    image: d.image_path ? `${BACKEND}${d.image_path}` : "/images/doctors/dr-sarah-johnson.png",
+
+    // ✅ IMPORTANT: build full image url using env base (Railway in production)
+    image: d.image_path
+      ? buildImageUrl(d.image_path)
+      : "/images/doctors/dr-sarah-johnson.png",
   };
 }
 
