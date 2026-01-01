@@ -1,4 +1,5 @@
-const API_BASE = "http://localhost:5000";
+const API_BASE =
+  process.env.REACT_APP_API_URL || "http://localhost:5000";
 
 export async function apiRequest(endpoint, options = {}) {
   const token = localStorage.getItem("token");
@@ -16,7 +17,6 @@ export async function apiRequest(endpoint, options = {}) {
   return data;
 }
 
-// ✅ Default export to support: import api from "../api";
 const api = {
   get: (endpoint) => apiRequest(endpoint),
   post: (endpoint, bodyObj) =>
