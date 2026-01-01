@@ -3,14 +3,11 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Users, HeartPulse, ShieldCheck } from "lucide-react";
 
-import api from "../api";
+import api, { buildImageUrl } from "../api";
 import SectionHeader from "../components/SectionHeader.jsx";
 import DoctorCard from "../components/DoctorCard.jsx";
 
-// If you already have these in src/data.js
 import { stats, testimonials } from "../data.js";
-
-const BACKEND = "http://localhost:5000";
 
 function mapDoctor(d) {
   return {
@@ -21,7 +18,11 @@ function mapDoctor(d) {
     experience: `${d.years_experience} years experience`,
     location: d.location,
     about: d.bio,
-    image: d.image_path ? `${BACKEND}${d.image_path}` : "/images/doctors/dr-sarah-johnson.png",
+
+    // ✅ Build full backend URL (Railway in production)
+    image: d.image_path
+      ? buildImageUrl(d.image_path)
+      : buildImageUrl("/images/doctors/dr-sarah-johnson.png"),
   };
 }
 
@@ -33,7 +34,7 @@ function Home() {
 
   useEffect(() => {
     api
-      .get("/doctors") // ✅ correct route
+      .get("/doctors")
       .then((rows) => {
         const mapped = (rows || []).map(mapDoctor);
         setDoctors(mapped);
@@ -41,7 +42,7 @@ function Home() {
       })
       .catch((err) => {
         console.log("HOME DOCTORS ERROR:", err);
-        setError(err?.message || "Failed to load doctors. Is backend running?");
+        setError(err?.message || "Failed to load doctors.");
       });
   }, []);
 
@@ -110,12 +111,13 @@ function Home() {
           <div className="relative">
             <div className="rounded-[2.5rem] overflow-hidden shadow-xl bg-white">
               <img
-                src="/images/doctors/hero/hero-doctor-patient.png"
+                // ✅ Hero image should come from backend too (if it exists there)
+                src={buildImageUrl("/images/doctors/hero/hero-doctor-patient.png")}
                 alt="Doctor with patient"
                 className="w-full h-[340px] object-cover"
                 onError={(e) => {
-                  e.target.onerror = null;
-                  e.target.src = "/images/doctors/dr-sarah-johnson.png";
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src = buildImageUrl("/images/doctors/dr-sarah-johnson.png");
                 }}
               />
             </div>
@@ -206,12 +208,13 @@ function Home() {
 
                 <div className="flex items-center gap-3 mt-2">
                   <img
+                    // If review.avatar is local, keep it. If it's missing, fallback to backend-served image.
                     src={review.avatar}
                     alt={review.name}
                     className="h-10 w-10 rounded-full object-cover"
                     onError={(e) => {
-                      e.target.onerror = null;
-                      e.target.src = "/images/doctors/dr-sarah-johnson.png";
+                      e.currentTarget.onerror = null;
+                      e.currentTarget.src = buildImageUrl("/images/doctors/dr-sarah-johnson.png");
                     }}
                   />
                   <div>
