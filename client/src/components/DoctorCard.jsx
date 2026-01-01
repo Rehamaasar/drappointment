@@ -1,5 +1,6 @@
 import { Star } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+
 function DoctorCard({ doctor }) {
   const navigate = useNavigate();
 
@@ -7,7 +8,6 @@ function DoctorCard({ doctor }) {
     navigate(`/doctors/${doctor.id}`);
   };
 
-  
   const name = doctor.full_name || doctor.name || "Doctor";
   const specialty = doctor.specialty_name || doctor.specialty || "Specialist";
   const rating = doctor.rating ?? "—";
@@ -17,8 +17,8 @@ function DoctorCard({ doctor }) {
       ? `${doctor.years_experience} years experience`
       : doctor.experience || "";
 
-  const img =
-    doctor.image_path || doctor.image || "/images/doctors/dr-sarah-johnson.png";
+  // ✅ Doctors.jsx already mapped image to full URL (Railway)
+  const img = doctor.image || "/images/doctors/dr-sarah-johnson.png";
 
   return (
     <div className="bg-white rounded-3xl shadow-lg overflow-hidden hover:shadow-xl transition group">
@@ -27,8 +27,8 @@ function DoctorCard({ doctor }) {
           src={img}
           alt={name}
           onError={(e) => {
-            e.target.onerror = null;
-            e.target.src = "/images/doctors/dr-sarah-johnson.png";
+            e.currentTarget.onerror = null;
+            e.currentTarget.src = "/images/doctors/dr-sarah-johnson.png";
           }}
           className="max-h-full w-auto object-contain transition-transform duration-500 group-hover:scale-110"
         />
