@@ -1,13 +1,10 @@
-// src/pages/DoctorDetails.jsx
 import { useEffect, useMemo, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Calendar, Clock, MapPin, Star } from "lucide-react";
-import api from "../api";
+import api, { buildImageUrl } from "../api";
 
 function DoctorDetails() {
   const { id } = useParams();
-
-  const API_BASE = "http://localhost:5000"; // ✅ backend base
 
   const [doctor, setDoctor] = useState(null);
   const [availability, setAvailability] = useState([]);
@@ -19,14 +16,12 @@ function DoctorDetails() {
     setError("");
 
     api
-      .get(`/doctors/${id}`) // ✅ backend route
+      .get(`/doctors/${id}`)
       .then((data) => {
-        // Backend returns: { doctor, availability, reviews }
         if (data?.doctor) {
           setDoctor(data.doctor);
           setAvailability(Array.isArray(data.availability) ? data.availability : []);
         } else {
-          // fallback if backend returns doctor only
           setDoctor(data);
           setAvailability(Array.isArray(data?.available) ? data.available : []);
         }
@@ -36,14 +31,6 @@ function DoctorDetails() {
         setError(err?.message || "Doctor not found.");
       });
   }, [id]);
-
-  // ✅ helper: make image URL always point to backend
-  const buildImageUrl = (pathOrUrl) => {
-    if (!pathOrUrl) return `${API_BASE}/images/doctors/dr-sarah-johnson.png`;
-    if (String(pathOrUrl).startsWith("http")) return pathOrUrl; // already full url
-    // backend stores /images/doctors/...
-    return `${API_BASE}${pathOrUrl}`;
-  };
 
   const ui = useMemo(() => {
     if (!doctor) return null;
@@ -60,8 +47,10 @@ function DoctorDetails() {
     const location = doctor.location || "";
     const about = doctor.bio || doctor.about || "";
 
-    // ✅ IMPORTANT: use backend image
-    const img = buildImageUrl(doctor.image_path || doctor.image);
+    // ✅ use env-based backend URL
+    const img = doctor.image_path
+      ? buildImageUrl(doctor.image_path)
+      : "/images/doctors/dr-sarah-johnson.png";
 
     const slots = availability.length ? availability : (doctor.available || []);
 
@@ -103,9 +92,8 @@ function DoctorDetails() {
               alt={ui.name}
               className="w-full h-full object-cover"
               onError={(e) => {
-                // ✅ fallback to a real backend-served image
-                e.target.onerror = null;
-                e.target.src = `${API_BASE}/images/doctors/dr-sarah-johnson.png`;
+                e.currentTarget.onerror = null;
+                e.currentTarget.src = "/images/doctors/dr-sarah-johnson.png";
               }}
             />
           </div>
