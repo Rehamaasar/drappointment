@@ -19,7 +19,7 @@ function mapDoctor(d) {
     location: d.location,
     about: d.bio,
 
-    // ✅ Build full backend URL (Railway in production)
+    // ✅ doctor images come from backend
     image: d.image_path
       ? buildImageUrl(d.image_path)
       : buildImageUrl("/images/doctors/dr-sarah-johnson.png"),
@@ -111,13 +111,15 @@ function Home() {
           <div className="relative">
             <div className="rounded-[2.5rem] overflow-hidden shadow-xl bg-white">
               <img
-                // ✅ Hero image should come from backend too (if it exists there)
-                src={buildImageUrl("/images/doctors/hero/hero-doctor-patient.png")}
+                // ✅ HERO image MUST be served from the frontend public folder (Vercel)
+                // Put it here: client/public/images/hero/hero-doctor-patient.png
+                src="/images/hero/hero-doctor-patient.png"
                 alt="Doctor with patient"
                 className="w-full h-[340px] object-cover"
                 onError={(e) => {
+                  // ✅ never fallback to a doctor's portrait
                   e.currentTarget.onerror = null;
-                  e.currentTarget.src = buildImageUrl("/images/doctors/dr-sarah-johnson.png");
+                  e.currentTarget.src = "/images/hero/hero-doctor-patient.png";
                 }}
               />
             </div>
@@ -208,7 +210,6 @@ function Home() {
 
                 <div className="flex items-center gap-3 mt-2">
                   <img
-                    // If review.avatar is local, keep it. If it's missing, fallback to backend-served image.
                     src={review.avatar}
                     alt={review.name}
                     className="h-10 w-10 rounded-full object-cover"
