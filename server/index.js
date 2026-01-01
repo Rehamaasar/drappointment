@@ -5,19 +5,26 @@ import mysql from "mysql2";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import path from "path";
+import { fileURLToPath } from "url";
 
 dotenv.config();
 
 const app = express();
 
 /* =========================================================
+   Fix __dirname for ES Modules
+========================================================= */
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+/* =========================================================
    1) Serve Images
-   Your doctors images must be inside:
+   Put images here:
    server/public/images/doctors/...
-   Then the URL becomes:
+   URL:
    https://YOUR_BACKEND_URL/images/doctors/filename.jpg
 ========================================================= */
-app.use("/images", express.static(path.join(process.cwd(), "public/images")));
+app.use("/images", express.static(path.join(__dirname, "public", "images")));
 
 /* =========================================================
    2) Middlewares
@@ -26,10 +33,11 @@ app.use(express.json());
 
 /* =========================================================
    3) CORS (IMPORTANT)
-   Put your Vercel URL in Railway variable FRONTEND_ORIGIN
+   Railway variable:
+   FRONTEND_ORIGIN = https://YOUR-VERCEL-APP.vercel.app
 ========================================================= */
 const allowedOrigins = [
-  process.env.FRONTEND_ORIGIN, // e.g. https://drappointment-chi.vercel.app
+  process.env.FRONTEND_ORIGIN,
   "http://localhost:3000",
   "http://127.0.0.1:3000",
   "http://localhost:5173",
@@ -38,24 +46,33 @@ const allowedOrigins = [
 
 app.use(
   cors({
-    origin: allowedOrigins,
+    origin: (origin, callback) => {
+      // allow Postman / server-to-server requests (no origin)
+      if (!origin) return callback(null, true);
+
+      if (allowedOrigins.includes(origin)) return callback(null, true);
+
+      return callback(new Error(`CORS blocked: ${origin}`), false);
+    },
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 
+// handle preflight
 app.options("*", cors());
 
 /* =========================================================
    4) DB Connection (Railway MySQL variables)
-   Railway gives: MYSQLHOST, MYSQLUSER, MYSQLPASSWORD, MYSQLDATABASE, MYSQLPORT
-   Local can still work if you set DB_HOST/DB_USER/... (optional)
+   Railway gives:
+   MYSQLHOST, MYSQLUSER, MYSQLPASSWORD, MYSQLDATABASE, MYSQLPORT
 ========================================================= */
 const DB_HOST = process.env.MYSQLHOST || process.env.DB_HOST || "localhost";
 const DB_USER = process.env.MYSQLUSER || process.env.DB_USER || "root";
 const DB_PASSWORD = process.env.MYSQLPASSWORD || process.env.DB_PASSWORD || "";
-const DB_NAME = process.env.MYSQLDATABASE || process.env.DB_NAME || "healthcare_plus";
+const DB_NAME =
+  process.env.MYSQLDATABASE || process.env.DB_NAME || "healthcare_plus";
 const DB_PORT = Number(process.env.MYSQLPORT || process.env.DB_PORT || 3306);
 
 const db = mysql.createPool({
@@ -107,7 +124,7 @@ function requireAuth(req, res, next) {
     const decoded = jwt.verify(token, JWT_SECRET);
     req.user = decoded;
     return next();
-  } catch (e) {
+  } catch {
     return sendError(res, 401, "Unauthorized: token invalid");
   }
 }
@@ -126,8 +143,6 @@ app.get("/health", (req, res) => {
 /* =========================================================
    AUTH APIs
 ========================================================= */
-
-// POST /auth/signup
 app.post("/auth/signup", (req, res) => {
   const { full_name, email, password, phone } = req.body;
 
@@ -146,9 +161,7 @@ app.post("/auth/signup", (req, res) => {
   db.query(checkQ, [cleanEmail], async (err, rows) => {
     if (err) return sendError(res, 500, "Database error while checking email.");
 
-    if (rows.length > 0) {
-      return sendError(res, 400, "Email already exists.");
-    }
+    if (rows.length > 0) return sendError(res, 400, "Email already exists.");
 
     const salt = await bcrypt.genSalt(10);
     const password_hash = await bcrypt.hash(password, salt);
@@ -177,7 +190,6 @@ app.post("/auth/signup", (req, res) => {
   });
 });
 
-// POST /auth/login
 app.post("/auth/login", (req, res) => {
   const { email, password } = req.body;
 
@@ -190,17 +202,12 @@ app.post("/auth/login", (req, res) => {
   const q = "SELECT * FROM users WHERE email = ?";
   db.query(q, [cleanEmail], async (err, rows) => {
     if (err) return sendError(res, 500, "Database error while logging in.");
-
-    if (rows.length === 0) {
-      return sendError(res, 401, "Invalid email or password.");
-    }
+    if (rows.length === 0) return sendError(res, 401, "Invalid email or password.");
 
     const userRow = rows[0];
     const ok = await bcrypt.compare(password, userRow.password_hash);
 
-    if (!ok) {
-      return sendError(res, 401, "Invalid email or password.");
-    }
+    if (!ok) return sendError(res, 401, "Invalid email or password.");
 
     const user = {
       id: userRow.id,
@@ -215,9 +222,9 @@ app.post("/auth/login", (req, res) => {
   });
 });
 
-// GET /auth/me
 app.get("/auth/me", requireAuth, (req, res) => {
-  const q = "SELECT id, full_name, email, phone, role, created_at FROM users WHERE id = ?";
+  const q =
+    "SELECT id, full_name, email, phone, role, created_at FROM users WHERE id = ?";
   db.query(q, [req.user.id], (err, rows) => {
     if (err) return sendError(res, 500, "Database error while fetching user.");
     if (rows.length === 0) return sendError(res, 404, "User not found.");
@@ -385,9 +392,9 @@ app.use((req, res) => {
 });
 
 /* -----------------------------
-   Start server
+   Start server (Railway uses process.env.PORT)
 ----------------------------- */
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
+app.listen(PORT, "0.0.0.0", () => {
   console.log(`✅ Server running on port ${PORT}`);
 });
