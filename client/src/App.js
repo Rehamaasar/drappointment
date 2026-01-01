@@ -11,11 +11,11 @@ import Contact from "./pages/Contact";
 import Login from "./pages/Login";
 import SignUp from "./pages/SignUp.jsx";
 
-
 function App() {
   return (
-    <Layout>
-      <Routes>
+    <Routes>
+      {/* Layout wraps all pages */}
+      <Route element={<Layout />}>
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
         <Route path="/services" element={<Services />} />
@@ -24,8 +24,8 @@ function App() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
-      </Routes>
-    </Layout>
+      </Route>
+    </Routes>
   );
 }
 
