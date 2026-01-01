@@ -17,6 +17,18 @@ export async function apiRequest(endpoint, options = {}) {
   return data;
 }
 
+// ✅ Always convert backend image paths to a full URL
+export function buildImageUrl(imagePath) {
+  if (!imagePath) return "";
+  const str = String(imagePath);
+
+  // already full URL
+  if (str.startsWith("http://") || str.startsWith("https://")) return str;
+
+  // backend returns /images/...
+  return `${API_BASE}${str.startsWith("/") ? "" : "/"}${str}`;
+}
+
 const api = {
   get: (endpoint) => apiRequest(endpoint),
   post: (endpoint, bodyObj) =>
@@ -25,6 +37,5 @@ const api = {
     apiRequest(endpoint, { method: "PUT", body: JSON.stringify(bodyObj) }),
   delete: (endpoint) => apiRequest(endpoint, { method: "DELETE" }),
 };
-// redeploy
 
 export default api;
