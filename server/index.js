@@ -6,60 +6,81 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import path from "path";
 
-
 dotenv.config();
 
 const app = express();
-// Serve images from /public/images
+
+/* =========================================================
+   1) Serve Images
+   Your doctors images must be inside:
+   server/public/images/doctors/...
+   Then the URL becomes:
+   https://YOUR_BACKEND_URL/images/doctors/filename.jpg
+========================================================= */
 app.use("/images", express.static(path.join(process.cwd(), "public/images")));
 
-
-/* -----------------------------
-   Middlewares
------------------------------ */
+/* =========================================================
+   2) Middlewares
+========================================================= */
 app.use(express.json());
 
+/* =========================================================
+   3) CORS (IMPORTANT)
+   Put your Vercel URL in Railway variable FRONTEND_ORIGIN
+========================================================= */
 const allowedOrigins = [
-  process.env.FRONTEND_ORIGIN || "http://localhost:3000",
+  process.env.FRONTEND_ORIGIN, // e.g. https://drappointment-chi.vercel.app
+  "http://localhost:3000",
+  "http://127.0.0.1:3000",
   "http://localhost:5173",
-];
+  "http://127.0.0.1:5173",
+].filter(Boolean);
 
 app.use(
   cors({
-    origin: [
-      "http://localhost:3000",
-      "http://127.0.0.1:3000",
-      "http://localhost:5173",
-      "http://127.0.0.1:5173",
-    ],
+    origin: allowedOrigins,
+    credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 
-// handle preflight
 app.options("*", cors());
 
-/* -----------------------------
-   DB Connection
------------------------------ */
+/* =========================================================
+   4) DB Connection (Railway MySQL variables)
+   Railway gives: MYSQLHOST, MYSQLUSER, MYSQLPASSWORD, MYSQLDATABASE, MYSQLPORT
+   Local can still work if you set DB_HOST/DB_USER/... (optional)
+========================================================= */
+const DB_HOST = process.env.MYSQLHOST || process.env.DB_HOST || "localhost";
+const DB_USER = process.env.MYSQLUSER || process.env.DB_USER || "root";
+const DB_PASSWORD = process.env.MYSQLPASSWORD || process.env.DB_PASSWORD || "";
+const DB_NAME = process.env.MYSQLDATABASE || process.env.DB_NAME || "healthcare_plus";
+const DB_PORT = Number(process.env.MYSQLPORT || process.env.DB_PORT || 3306);
+
 const db = mysql.createPool({
-  host: process.env.DB_HOST || "localhost",
-  user: process.env.DB_USER || "root",
-  password: process.env.DB_PASSWORD || "",
-  database: process.env.DB_NAME || "healthcare_plus",
-  port: Number(process.env.DB_PORT || 3306),
+  host: DB_HOST,
+  user: DB_USER,
+  password: DB_PASSWORD,
+  database: DB_NAME,
+  port: DB_PORT,
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0,
 });
 
 db.getConnection((err, conn) => {
   if (err) {
     console.error("❌ DB connection failed:", err.message);
   } else {
-    console.log("✅ Connected to MySQL database");
+    console.log("✅ Connected to MySQL database:", DB_NAME);
     conn.release();
   }
 });
 
+/* =========================================================
+   5) JWT
+========================================================= */
 const JWT_SECRET = process.env.JWT_SECRET || "change_me";
 
 /* -----------------------------
@@ -84,16 +105,16 @@ function requireAuth(req, res, next) {
 
   try {
     const decoded = jwt.verify(token, JWT_SECRET);
-    req.user = decoded; // { id, email, full_name, role }
+    req.user = decoded;
     return next();
   } catch (e) {
     return sendError(res, 401, "Unauthorized: token invalid");
   }
 }
 
-/* -----------------------------
-   Base Routes
------------------------------ */
+/* =========================================================
+   6) Base Routes
+========================================================= */
 app.get("/", (req, res) => {
   res.status(200).send("HealthCare+ API is running ✅");
 });
@@ -103,9 +124,7 @@ app.get("/health", (req, res) => {
 });
 
 /* =========================================================
-   AUTH APIs (signup/login/me)
-   Uses your `users` table:
-   (id, full_name, email, phone, password_hash, role, created_at)
+   AUTH APIs
 ========================================================= */
 
 // POST /auth/signup
@@ -152,7 +171,6 @@ app.post("/auth/signup", (req, res) => {
         };
 
         const token = jwt.sign(user, JWT_SECRET, { expiresIn: "7d" });
-
         return sendSuccess(res, 201, "Signup successful!", { token, user });
       }
     );
@@ -193,7 +211,6 @@ app.post("/auth/login", (req, res) => {
     };
 
     const token = jwt.sign(user, JWT_SECRET, { expiresIn: "7d" });
-
     return sendSuccess(res, 200, "Login successful!", { token, user });
   });
 });
@@ -209,11 +226,8 @@ app.get("/auth/me", requireAuth, (req, res) => {
 });
 
 /* =========================================================
-   SPECIALTIES APIs
-   Table: specialties (id, name)
+   SPECIALTIES
 ========================================================= */
-
-// GET /specialties
 app.get("/specialties", (req, res) => {
   const q = "SELECT id, name FROM specialties ORDER BY name ASC";
   db.query(q, (err, rows) => {
@@ -223,11 +237,8 @@ app.get("/specialties", (req, res) => {
 });
 
 /* =========================================================
-   DOCTORS APIs
-   Table: doctors, doctor_availability, reviews
+   DOCTORS
 ========================================================= */
-
-// GET /doctors
 app.get("/doctors", (req, res) => {
   const q = `
     SELECT 
@@ -252,7 +263,6 @@ app.get("/doctors", (req, res) => {
   });
 });
 
-// GET /doctors/:id  (doctor + availability + reviews)
 app.get("/doctors/:id", (req, res) => {
   const doctorId = Number(req.params.id);
 
@@ -305,14 +315,11 @@ app.get("/doctors/:id", (req, res) => {
 });
 
 /* =========================================================
-   APPOINTMENTS APIs
-   Table: appointments
+   APPOINTMENTS
 ========================================================= */
-
-// POST /appointments  (guest OR logged-in)
 app.post("/appointments", (req, res) => {
   const {
-    user_id, // optional if you want to pass it, but better: leave null for guest
+    user_id,
     patient_full_name,
     patient_email,
     patient_phone,
