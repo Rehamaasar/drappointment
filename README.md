@@ -1,132 +1,124 @@
-🏥 HealthCare+ – Medical Appointment & Services Web Application
+🏥 HealthCare+ Doctor Appointment System
 
-HealthCare+ is a modern ReactJS-based healthcare web application designed to help users explore medical services, browse doctors, view detailed profiles, and book appointments easily. The platform provides a clean UI/UX, responsive design, and a smooth user experience. Users can access information about doctors, services, contact details, and login functionality—all wrapped in a simple, elegant interface.
+A full-stack Doctor Appointment Booking System built using React, Node.js, Express, and MySQL.
+The platform allows users to browse doctors, view details, and book appointments through a modern, responsive interface.
 
-🚀 Live Demo
-drappointment-pi.vercel.app
-or
-drappointment-k0axgpycy-lamaharmouch18s-projects.vercel.app
+📌 Project Overview
 
-📌 Features
+HealthCare+ is a web application designed to simplify the process of finding doctors and booking medical appointments online.
+It separates concerns into a frontend (React) and backend (Node.js + Express) with a MySQL database.
 
-Fully responsive UI built with ReactJS + Tailwind CSS
+🛠️ Tech Stack
+Frontend
 
-Clean navigation using React Router DOM
-
-Dynamic Doctor Details using URL parameters
-
-Contact / Appointment form with validation and toast feedback
-
-Login UI (local form handling)
-
-Doctors directory with profiles, ratings, and availability
-
-Services listing with categorized medical features
-
-Reusable components
-
-Navbar
-
-Footer
-
-SectionHeader
-
-DoctorCard
-
-Global data using external data files
-
-Fully deployable on Vercel
-
-🔑 Key Code (Summaries)
-Layout Component
-
-Wraps the entire application with a Navbar and Footer to maintain consistency across all pages.
-
-Doctors Data
-
-Stored in src/data/doctors.js, including name, specialty, experience, rating, availability, and image.
-
-App Routing
-
-Defines all routes using React Router DOM:
-
-/ Home
-
-/about About
-
-/services Services
-
-/doctors Doctors
-
-/doctors/:id Doctor Details
-
-/contact Book Appointment
-
-/login Login
-
-Appointment Form
-
-Includes validation for required fields and toast notifications for:
-
-Missing fields
-
-Successful appointment request
-
-Login
-
-Frontend-only validation with a success toast message.
-
-🛠 Technologies Used
-
-ReactJS
-
-React Router DOM
+React (Create React App)
 
 Tailwind CSS
 
-Lucide Icons
+Axios / Fetch API
 
-Vercel Deployment
+React Router
 
-Git & GitHub Version Control
+Deployed on Vercel
 
-📥 Installation & Setup
-# Clone repository
-git clone https://github.com/lamaharmouch18/drappointment
+Backend
 
-# Navigate to project
-cd healthcareplus
+Node.js
 
-# Install dependencies
-npm install
+Express.js
 
-# Run development server
-npm run dev
+MySQL
 
-📌 Future Improvements
+JWT Authentication
 
-Add backend authentication (Next part)
+Deployed on Railway
 
-Add real database for doctors and appointments (Next part)
+Database
 
-Add patient dashboard
+MySQL (Railway hosted) 
+✨ Features
 
-Add user registration
+View all available doctors
 
-Add appointment history
+Doctor details (specialty, experience, rating, bio)
 
-👥 Team Members
-Name  ID
-Lama Harmouch  52330808
-Reham Aasar  52230205
+Secure authentication using JWT
 
-Instructor: Dr. Ahmad Trad
-Semester: Fall 2025–2026  
+RESTful API architecture
 
+Responsive UI
 
-<<<<<<< HEAD
-Final full project submission
-=======
-Final submission – fullstack project
+Backend error handling
 
->>>>>>> c92553fa89cee50773600b5fdabaad6abcbed238
+Environment-based configuration
+
+🌐 Live Links
+Frontend (Vercel)
+
+https://drappointment-82za.vercel.app
+
+Backend (Railway)
+https://romantic-acceptance-production-2479.up.railway.app
+
+📂 Project Structure
+drappointment/
+│
+├── frontend/
+│   ├── src/
+│   │   ├── api/
+│   │   ├── pages/
+│   │   ├── components/
+│   │   └── App.jsx
+│
+├── backend/
+│   ├── routes/
+│   ├── controllers/
+│   ├── middleware/
+│   ├── index.js
+│   └── db.js
+│
+└── README.md
+
+🔑 Environment Variables
+Backend (Railway)
+PORT=5000
+MYSQLHOST=...
+MYSQLUSER=...
+MYSQLPASSWORD=...
+MYSQLDATABASE=...
+MYSQLPORT=...
+JWT_SECRET=your_secret_key
+
+Frontend (Vercel)
+REACT_APP_API_URL=https://romantic-acceptance-production-2479.up.railway.app
+🔄 API Endpoints (Sample)
+Method	Endpoint	Description
+GET	/doctors	Get all doctors
+GET	/doctors/:id	Get doctor details
+POST	/auth/login	User login
+POST	/auth/register	User registration
+🧪 Testing
+
+Backend tested using browser & Postman
+
+Frontend tested via deployed Vercel domain
+
+Network tab used to verify API responses
+
+🚀 Deployment
+
+Frontend deployed on Vercel
+
+Backend & MySQL deployed on Railway
+
+Environment variables configured securely
+
+👩‍💻 Author
+
+Reham Aasar
+Lama Harmouch
+
+Lebanese International University (LIU)
+📜 License
+
+This project is for educational purposes.
