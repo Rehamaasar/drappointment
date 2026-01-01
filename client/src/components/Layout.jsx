@@ -1,6 +1,3 @@
-// Assigned to Lama
-// src/components/Layout.jsx
-
 import Navbar from "./Navbar";
 import Footer from "./Footer";
 
@@ -14,13 +11,4 @@ function Layout({ children }) {
   );
 }
 
-<<<<<<< Updated upstream:client/src/components/Layout.jsx
 export default Layout;
-<<<<<<< Updated upstream:client/src/components/Layout.jsx
-=======
-export default Layout;
-
->>>>>>> Stashed changes:src/components/Layout.jsx
-=======
-
->>>>>>> Stashed changes:src/components/Layout.jsx
