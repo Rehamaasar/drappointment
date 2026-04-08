@@ -89,7 +89,7 @@ function About() {
           {/* RIGHT IMAGE */}
           <div className="rounded-[2.5rem] overflow-hidden shadow-xl bg-white">
             <img
-              src="/images/doctors/hero/hospital-interior.png"
+              src="/images/hero/hospital-interior.png"
               alt="Hospital interior"
               className="w-full h-[320px] object-cover"
             />
